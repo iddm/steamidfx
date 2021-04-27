@@ -3,6 +3,12 @@ name = "steamidfx"
 version = "1.0.0"
 authors = ["Victor Polevoy <fx@thefx.co>"]
 edition = "2018"
+description = "Work with steam id easily"
+readme = "README.md"
+license = "MIT"
+keywords = ["steam", "steamid", "id"]
+repository = "https://github.com/vityafx/steamidfx"
+documentation = "https://docs.rs/steamidfx"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
