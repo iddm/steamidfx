@@ -10,7 +10,7 @@ The implementation 99% follows the specification as far as it is possible.
 
 Also provides a way to construct requests and parse responses from such services as:
 
-- steamid.co
+- [`steamid.co`](https://steamid.co)
 
 ## Rust version
 The minimal rust version the library supports is `1.36`.
