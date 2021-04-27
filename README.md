@@ -13,7 +13,7 @@ Also provides a way to construct requests and parse responses from such services
 - [`steamid.co`](https://steamid.co)
 
 ## Rust version
-The minimal rust version the library supports is `1.36`.
+The minimal rust version the library supports is `1.42`.
 Previous versions might still work but not guaranteed to work correctly.
 
 ## License

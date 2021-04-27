@@ -1,7 +1,7 @@
 //! SteamID FX crate.
 //! Work with SteamIDs easily and safely.
-//! https://steamid.io/lookup/
-//! https://developer.valvesoftware.com/wiki/SteamID
+//! <https://steamid.io/lookup/>
+//! <https://developer.valvesoftware.com/wiki/SteamID>
 #![deny(warnings)]
 #![deny(missing_docs)]
 

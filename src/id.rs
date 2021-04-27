@@ -324,7 +324,8 @@ impl SteamId3 {
     }
 }
 
-/// https://developer.valvesoftware.com/wiki/SteamID
+/// <https://developer.valvesoftware.com/wiki/SteamID>
+/// Holds a steam id in various formats.
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum SteamId {
     /// Steam ID in a single integer format (SteamID64).
@@ -561,7 +562,7 @@ mod tests {
             SteamId32("STEAM_0:0:11526534".to_owned())
         );
         assert_eq!(
-            SteamId64::try_from(steam_id_3.clone()).unwrap(),
+            SteamId64::try_from(steam_id_3).unwrap(),
             SteamId64(76561197983318796)
         );
         assert_eq!(

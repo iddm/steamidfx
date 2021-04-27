@@ -1,7 +1,7 @@
 //! The requests feature implementation which allows making requests to different services for working with
 //! steam id.
 
-/// Steam profile from https://steamid.co.
+/// Steam profile from <https://steamid.co>.
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serialization", derive(serde::Deserialize))]
 pub struct SteamCoProfile {
