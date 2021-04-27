@@ -56,7 +56,7 @@ pub enum SteamIdUniverse {
     /// A developer account (a game developer's?).
     Developer = 4,
     /// Can't remember already. Fix this :-)
-    RC = 5,
+    Rc = 5,
 }
 
 impl std::fmt::Display for SteamIdUniverse {
@@ -67,7 +67,7 @@ impl std::fmt::Display for SteamIdUniverse {
             SteamIdUniverse::Beta => "Beta",
             SteamIdUniverse::Internal => "Internal",
             SteamIdUniverse::Developer => "Developer",
-            SteamIdUniverse::RC => "RC",
+            SteamIdUniverse::Rc => "RC",
         })
     }
 }
@@ -82,7 +82,7 @@ impl std::convert::TryFrom<u64> for SteamIdUniverse {
             2 => SteamIdUniverse::Beta,
             3 => SteamIdUniverse::Internal,
             4 => SteamIdUniverse::Developer,
-            5 => SteamIdUniverse::RC,
+            5 => SteamIdUniverse::Rc,
             _ => return Err("The number doesn't represent a correct steam id universe.".into()),
         })
     }
