@@ -5,4 +5,11 @@ error_chain::error_chain! {
         Io(::std::io::Error) #[cfg(unix)];
         ParseInt(::std::num::ParseIntError);
     }
+
+    errors {
+        InvalidSteamId(id: String) {
+            description("Invalid Steam ID.")
+            display("Invalid Steam ID: \"{}\".", id)
+        }
+    }
 }

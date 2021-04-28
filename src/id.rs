@@ -1,3 +1,6 @@
+//! Steam ID and all it needs and may represent.
+//!
+//! Please check out the structures for more information.
 use crate::bit_iterator::BitIterator;
 use regex::Regex;
 #[cfg(feature = "serialization")]
@@ -44,7 +47,7 @@ impl std::fmt::Display for OnlineState {
     feature = "serialization",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub enum SteamIdUniverse {
+pub enum Universe {
     /// An individual account or unspecified.
     IndividualOrUnspecified = 0,
     /// A public account.
@@ -59,56 +62,56 @@ pub enum SteamIdUniverse {
     Rc = 5,
 }
 
-impl std::fmt::Display for SteamIdUniverse {
+impl std::fmt::Display for Universe {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt.write_str(match self {
-            SteamIdUniverse::IndividualOrUnspecified => "Individual or unspecified",
-            SteamIdUniverse::Public => "Public",
-            SteamIdUniverse::Beta => "Beta",
-            SteamIdUniverse::Internal => "Internal",
-            SteamIdUniverse::Developer => "Developer",
-            SteamIdUniverse::Rc => "RC",
+            Universe::IndividualOrUnspecified => "Individual or unspecified",
+            Universe::Public => "Public",
+            Universe::Beta => "Beta",
+            Universe::Internal => "Internal",
+            Universe::Developer => "Developer",
+            Universe::Rc => "RC",
         })
     }
 }
 
-impl std::convert::TryFrom<u64> for SteamIdUniverse {
+impl std::convert::TryFrom<u64> for Universe {
     type Error = crate::error::Error;
 
     fn try_from(value: u64) -> crate::error::Result<Self> {
         Ok(match value {
-            0 => SteamIdUniverse::IndividualOrUnspecified,
-            1 => SteamIdUniverse::Public,
-            2 => SteamIdUniverse::Beta,
-            3 => SteamIdUniverse::Internal,
-            4 => SteamIdUniverse::Developer,
-            5 => SteamIdUniverse::Rc,
+            0 => Universe::IndividualOrUnspecified,
+            1 => Universe::Public,
+            2 => Universe::Beta,
+            3 => Universe::Internal,
+            4 => Universe::Developer,
+            5 => Universe::Rc,
             _ => return Err("The number doesn't represent a correct steam id universe.".into()),
         })
     }
 }
 
-impl std::convert::TryFrom<u32> for SteamIdUniverse {
+impl std::convert::TryFrom<u32> for Universe {
     type Error = crate::error::Error;
 
     fn try_from(value: u32) -> crate::error::Result<Self> {
-        Self::try_from(value as u64)
+        Self::try_from(u64::from(value))
     }
 }
 
-impl std::convert::TryFrom<u16> for SteamIdUniverse {
+impl std::convert::TryFrom<u16> for Universe {
     type Error = crate::error::Error;
 
     fn try_from(value: u16) -> crate::error::Result<Self> {
-        Self::try_from(value as u64)
+        Self::try_from(u64::from(value))
     }
 }
 
-impl std::convert::TryFrom<u8> for SteamIdUniverse {
+impl std::convert::TryFrom<u8> for Universe {
     type Error = crate::error::Error;
 
     fn try_from(value: u8) -> crate::error::Result<Self> {
-        Self::try_from(value as u64)
+        Self::try_from(u64::from(value))
     }
 }
 
@@ -118,7 +121,7 @@ impl std::convert::TryFrom<u8> for SteamIdUniverse {
     feature = "serialization",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub enum SteamIdAccountType {
+pub enum AccountType {
     /// The account is of an individual.
     Individual = 1,
     /// The account is of a multiseat type.
@@ -144,42 +147,50 @@ pub enum SteamIdAccountType {
     Invalid = 0,
 }
 
-impl std::fmt::Display for SteamIdAccountType {
+impl std::fmt::Display for AccountType {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt.write_str(match self {
-            SteamIdAccountType::Individual => "Individual",
-            SteamIdAccountType::Multiseat => "Multiseat",
-            SteamIdAccountType::GameServer => "Game server",
-            SteamIdAccountType::AnonymousGameServer => "Anonymous game server",
-            SteamIdAccountType::Pending => "Pending",
-            SteamIdAccountType::ContentServer => "Content server",
-            SteamIdAccountType::Clan => "Clan",
-            SteamIdAccountType::Chat => "Chat",
-            SteamIdAccountType::PeerToPeerSuperSeeder => "Peer to peer superseeder",
-            SteamIdAccountType::AnonymousUser => "Anonymous user",
-            SteamIdAccountType::Invalid => "Invalid",
+            AccountType::Individual => "Individual",
+            AccountType::Multiseat => "Multiseat",
+            AccountType::GameServer => "Game server",
+            AccountType::AnonymousGameServer => "Anonymous game server",
+            AccountType::Pending => "Pending",
+            AccountType::ContentServer => "Content server",
+            AccountType::Clan => "Clan",
+            AccountType::Chat => "Chat",
+            AccountType::PeerToPeerSuperSeeder => "Peer to peer superseeder",
+            AccountType::AnonymousUser => "Anonymous user",
+            AccountType::Invalid => "Invalid",
         })
     }
 }
 
 lazy_static::lazy_static! {
-    static ref STEAM_ID_ACCOUNT_TYPE_MAP: HashMap<char, SteamIdAccountType> = vec![
-        ('I', SteamIdAccountType::Invalid),
-        ('U', SteamIdAccountType::Individual),
-        ('M', SteamIdAccountType::Multiseat),
-        ('G', SteamIdAccountType::GameServer),
-        ('A', SteamIdAccountType::AnonymousGameServer),
-        ('P', SteamIdAccountType::Pending),
-        ('C', SteamIdAccountType::ContentServer),
-        ('g', SteamIdAccountType::Clan),
-        ('T', SteamIdAccountType::Chat),
-        ('L', SteamIdAccountType::Chat),
-        ('c', SteamIdAccountType::Chat),
-        ('a', SteamIdAccountType::AnonymousUser),
+    static ref ACCOUNT_TYPE_MAP: HashMap<char, AccountType> = vec![
+        ('I', AccountType::Invalid),
+        ('U', AccountType::Individual),
+        ('M', AccountType::Multiseat),
+        ('G', AccountType::GameServer),
+        ('A', AccountType::AnonymousGameServer),
+        ('P', AccountType::Pending),
+        ('C', AccountType::ContentServer),
+        ('g', AccountType::Clan),
+        ('T', AccountType::Chat),
+        ('L', AccountType::Chat),
+        ('c', AccountType::Chat),
+        ('a', AccountType::AnonymousUser),
     ].into_iter().collect();
+
+    static ref ID32_REGEXP: Regex = {
+        Regex::new(r"^STEAM_(\d):(\d):(\d+)$").unwrap()
+    };
+
+    static ref ID3_REGEXP: Regex = {
+        Regex::new(r"^(\w):(\d):(\d+)$").unwrap()
+    };
 }
 
-impl std::str::FromStr for SteamIdAccountType {
+impl std::str::FromStr for AccountType {
     type Err = crate::error::Error;
 
     fn from_str(s: &str) -> crate::error::Result<Self> {
@@ -191,58 +202,58 @@ impl std::str::FromStr for SteamIdAccountType {
     }
 }
 
-impl std::convert::TryFrom<char> for SteamIdAccountType {
+impl std::convert::TryFrom<char> for AccountType {
     type Error = crate::error::Error;
 
     fn try_from(value: char) -> crate::error::Result<Self> {
-        Ok(*STEAM_ID_ACCOUNT_TYPE_MAP
+        Ok(*ACCOUNT_TYPE_MAP
             .get(&value)
             .ok_or_else(|| "The string doesn't contain a correct id account type.".to_owned())?)
     }
 }
 
-impl std::convert::TryFrom<u64> for SteamIdAccountType {
+impl std::convert::TryFrom<u64> for AccountType {
     type Error = crate::error::Error;
 
     fn try_from(value: u64) -> crate::error::Result<Self> {
         Ok(match value {
-            0 => SteamIdAccountType::Invalid,
-            1 => SteamIdAccountType::Individual,
-            2 => SteamIdAccountType::Multiseat,
-            3 => SteamIdAccountType::GameServer,
-            4 => SteamIdAccountType::AnonymousGameServer,
-            5 => SteamIdAccountType::Pending,
-            6 => SteamIdAccountType::ContentServer,
-            7 => SteamIdAccountType::Clan,
-            8 => SteamIdAccountType::Chat,
-            9 => SteamIdAccountType::PeerToPeerSuperSeeder,
-            10 => SteamIdAccountType::AnonymousUser,
+            0 => AccountType::Invalid,
+            1 => AccountType::Individual,
+            2 => AccountType::Multiseat,
+            3 => AccountType::GameServer,
+            4 => AccountType::AnonymousGameServer,
+            5 => AccountType::Pending,
+            6 => AccountType::ContentServer,
+            7 => AccountType::Clan,
+            8 => AccountType::Chat,
+            9 => AccountType::PeerToPeerSuperSeeder,
+            10 => AccountType::AnonymousUser,
             _ => return Err("The number doesn't represent a correct steam id universe.".into()),
         })
     }
 }
 
-impl std::convert::TryFrom<u32> for SteamIdAccountType {
+impl std::convert::TryFrom<u32> for AccountType {
     type Error = crate::error::Error;
 
     fn try_from(value: u32) -> crate::error::Result<Self> {
-        Self::try_from(value as u64)
+        Self::try_from(u64::from(value))
     }
 }
 
-impl std::convert::TryFrom<u16> for SteamIdAccountType {
+impl std::convert::TryFrom<u16> for AccountType {
     type Error = crate::error::Error;
 
     fn try_from(value: u16) -> crate::error::Result<Self> {
-        Self::try_from(value as u64)
+        Self::try_from(u64::from(value))
     }
 }
 
-impl std::convert::TryFrom<u8> for SteamIdAccountType {
+impl std::convert::TryFrom<u8> for AccountType {
     type Error = crate::error::Error;
 
     fn try_from(value: u8) -> crate::error::Result<Self> {
-        Self::try_from(value as u64)
+        Self::try_from(u64::from(value))
     }
 }
 
@@ -252,11 +263,11 @@ impl std::convert::TryFrom<u8> for SteamIdAccountType {
     feature = "serialization",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct SteamIdInfo {
+pub struct Info {
     /// The universe this id belongs to.
-    pub universe: SteamIdUniverse,
+    pub universe: Universe,
     /// The type of the account.
-    pub account_type: SteamIdAccountType,
+    pub account_type: AccountType,
     /// Account instance.
     pub instance: u32,
     /// Account number.
@@ -267,17 +278,24 @@ pub struct SteamIdInfo {
 
 /// Steam Id 64.
 /// Example: `7656119xxxxxxxxxx`.
+#[allow(clippy::clippy::module_name_repetitions)]
 #[derive(Debug, Copy, Clone, Ord, PartialOrd, Hash, PartialEq, Eq)]
 #[cfg_attr(
     feature = "serialization",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct SteamId64(pub u64);
-impl SteamId64 {
+pub struct Id64(pub u64);
+impl Id64 {
     /// Get a detailed information about the steam account from the steam id.
-    pub fn info(&self) -> crate::error::Result<SteamIdInfo> {
+    ///
+    /// # Errors
+    /// Returns an error if the account type or universe are incorrect.
+    ///
+    /// # Panics
+    /// Panics when it suddenly becomes impossible to iterate over the bits in the steam id, what in fact can't happen ever.
+    pub fn info(self) -> crate::error::Result<Info> {
         let mut iter = BitIterator::new(self.0, 8);
-        Ok(SteamIdInfo {
+        Ok(Info {
             universe: iter.next().unwrap().try_into()?,
             account_type: iter.next_bits::<u8>(4).unwrap().try_into()?,
             instance: iter.next_bits::<u32>(20).unwrap(),
@@ -285,39 +303,109 @@ impl SteamId64 {
             authentication_server: iter.next_bits::<u8>(1).unwrap(),
         })
     }
+
+    /// Create a new Id64 with only three parameters passed, all others will be constructed using the default,
+    /// most commonly used values.
+    ///
+    /// # Errors
+    /// Throws `crate::error::Error` if it is impossible to create such an id due to the width of the values passed.
+    /// To avoid this, the values passed must be used according to the specification of the steam id 64.
+    /// Also may throw a error if the `account_type` passed is invalid.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// let old_id = steamidfx::id::Id64(76561197983318796);
+    /// let info = old_id.info().unwrap();
+    /// let new_id = steamidfx::id::Id64::new_simple(info.universe, info.authentication_server, info.account).unwrap();
+    /// assert_eq!(old_id, new_id);
+    /// ```
+    pub fn new_simple(
+        universe: Universe,
+        authentication_server: u8,
+        account: u32,
+    ) -> crate::error::Result<Id64> {
+        Id64::new_full(
+            universe,
+            AccountType::try_from(DEFAULT_STEAM_ACCOUNT_TYPE)?,
+            DEFAULT_STEAM_ACCOUNT_INSTANCE.into(),
+            authentication_server,
+            account,
+        )
+    }
+
+    /// Create a new Id64 with all the values specified explicitly.
+    ///
+    /// # Errors
+    /// Throws `crate::error::Error` if it is impossible to create such an id due to the width of the values passed.
+    /// To avoid this, the values passed must be used according to the specification of the steam id 64.
+    /// Also may throw a error if the `account_type` passed is invalid.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// let old_id = steamidfx::id::Id64(76561197983318796);
+    /// let info = old_id.info().unwrap();
+    /// let new_id = steamidfx::id::Id64::new_full(info.universe, info.account_type, info.instance, info.authentication_server, info.account).unwrap();
+    /// assert_eq!(old_id, new_id);
+    /// ```
+    pub fn new_full(
+        universe: Universe,
+        account_type: AccountType,
+        account_instance: u32,
+        authentication_server: u8,
+        account: u32,
+    ) -> crate::error::Result<Id64> {
+        let num = u64::from_str_radix(
+            &format!(
+                "{:08b}{:04b}{:020b}{:031b}{:b}",
+                universe as u8, account_type as u8, account_instance, account, authentication_server
+            ),
+            2,
+        )?;
+        Ok(Id64(num))
+    }
 }
 
 /// Steam Id 32.
 /// Example: `STEAM_0:X:XXXXXXXX`.
+#[allow(clippy::clippy::module_name_repetitions)]
 #[derive(Debug, Clone, Ord, PartialOrd, Hash, PartialEq, Eq)]
 #[cfg_attr(
     feature = "serialization",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct SteamId32(pub String);
+pub struct Id32(pub String);
 
 /// Steam Id 3.
 /// Example: `U:1:xxxxxxxx`.
+#[allow(clippy::clippy::module_name_repetitions)]
 #[derive(Debug, Clone, Ord, PartialOrd, Hash, PartialEq, Eq)]
 #[cfg_attr(
     feature = "serialization",
     derive(serde::Serialize, serde::Deserialize)
 )]
-pub struct SteamId3(pub String);
-impl SteamId3 {
+pub struct Id3(pub String);
+impl Id3 {
     /// Get a detailed information about the steam account from the steam id.
     /// This information may not contain all the fields correct as to how `SteamId64` can due to unavailable
     /// documentation of this format.
-    pub fn info(&self) -> crate::error::Result<SteamIdInfo> {
+    ///
+    /// # Errors
+    /// Returns an error if the id is of an incorrect format.
+    pub fn info(&self) -> crate::error::Result<Info> {
         let split: Vec<&str> = self.0.split(':').collect();
+        if split.len() < 3 {
+            return Err(crate::error::ErrorKind::InvalidSteamId(self.0.clone()).into());
+        }
         let authentication_server: u8 = split[1].parse()?;
         let account: u32 = split[2].parse()?;
-        Ok(SteamIdInfo {
+        Ok(Info {
             /// The universe is hard to know for sure, as from `SteamId3` format it is unknown how to
             /// parse it.
-            universe: SteamIdUniverse::IndividualOrUnspecified,
-            account_type: SteamIdAccountType::try_from(self.0.chars().next().unwrap())?,
-            instance: DEFAULT_STEAM_ACCOUNT_INSTANCE as u32,
+            universe: Universe::IndividualOrUnspecified,
+            account_type: AccountType::from_str(split[0])?,
+            instance: u32::from(DEFAULT_STEAM_ACCOUNT_INSTANCE),
             account,
             authentication_server,
         })
@@ -326,173 +414,194 @@ impl SteamId3 {
 
 /// <https://developer.valvesoftware.com/wiki/SteamID>
 /// Holds a steam id in various formats.
+///
+/// # Example
+///
+/// ```rust
+/// use std::convert::TryFrom;
+///
+/// let steam_id_64 = steamidfx::id::Id64(76561197983318796);
+/// let steam_id_3 = steamidfx::id::Id3("U:1:23053068".to_owned());
+/// assert_eq!(
+///     steamidfx::id::Id32::try_from(steam_id_3.clone()).unwrap(),
+///     steamidfx::id::Id32("STEAM_0:0:11526534".to_owned())
+/// );
+/// assert_eq!(
+///     steamidfx::id::Id64::try_from(steam_id_3).unwrap(),
+///     steamidfx::id::Id64(76561197983318796)
+/// );
+/// assert_eq!(
+///     steamidfx::id::Id32::try_from(steam_id_64).unwrap(),
+///     steamidfx::id::Id32("STEAM_0:0:11526534".to_owned())
+/// );
+/// ```
+
+#[allow(clippy::clippy::module_name_repetitions)]
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
-pub enum SteamId {
+pub enum Id {
     /// Steam ID in a single integer format (SteamID64).
     /// Example: `7656119xxxxxxxxxx`.
-    Id64(SteamId64),
+    Id64(Id64),
     /// Steam ID 32 in the default format, starting with `STEAM_0`.
     /// Example: `STEAM_0:X:XXXXXXXX`.
-    Id32(SteamId32),
+    Id32(Id32),
     /// Steam ID in the format called "Steam ID 3".
     /// Example: `U:1:xxxxxxxx`.
-    Id3(SteamId3),
+    Id3(Id3),
 }
 
-impl std::convert::TryFrom<SteamId32> for SteamId3 {
+impl std::convert::TryFrom<Id32> for Id3 {
     type Error = crate::error::Error;
 
-    fn try_from(id: SteamId32) -> crate::error::Result<SteamId3> {
-        let re = Regex::new(r"^STEAM_\d:\d:\d+$").unwrap();
-        if re.is_match(&id.0) {
+    fn try_from(id: Id32) -> crate::error::Result<Id3> {
+        if ID32_REGEXP.is_match(&id.0) {
             let split: Vec<&str> = id.0.split(':').collect();
             let first: u64 = split[1].parse()?;
             let second: u64 = split[2].parse()?;
-            let id = second * 2 + first;
-            return Ok(SteamId3(format!("U:1:{}", id)));
+            let num = second * 2 + first;
+            return Ok(Id3(format!("U:1:{}", num)));
         }
         Err("The steam id provided is not in the SteamID32 format.".into())
     }
 }
 
-impl std::convert::TryFrom<SteamId3> for SteamId32 {
+impl std::convert::TryFrom<Id3> for Id32 {
     type Error = crate::error::Error;
 
-    fn try_from(id: SteamId3) -> crate::error::Result<SteamId32> {
-        let re = Regex::new(r"^(\w):(\d):(\d+)$").unwrap();
-        if let Some(captures) = re.captures(&id.0) {
+    fn try_from(id: Id3) -> crate::error::Result<Id32> {
+        if let Some(captures) = ID3_REGEXP.captures(&id.0) {
             if captures.len() < 4 {
                 return Err("The steam id provided is not in the SteamID3 format.".into());
             }
-            let _account_type = SteamIdAccountType::from_str(captures.get(1).unwrap().as_str())?;
-            // Probably this is not an authentication server, I don't know then what it can be.
+            let _account_type = AccountType::from_str(captures.get(1).unwrap().as_str())?;
+            // Probably this is not an authentication server, but I don't know then what it can be.
             let _authentication_server: u8 = captures.get(2).unwrap().as_str().parse()?;
             let account: u32 = captures.get(3).unwrap().as_str().parse()?;
             if account % 2 == 0 {
-                return Ok(SteamId32(format!("STEAM_0:0:{}", account / 2)));
-            } else {
-                return Ok(SteamId32(format!("STEAM_0:1:{}", (account - 1) / 2)));
+                return Ok(Id32(format!("STEAM_0:0:{}", account / 2)));
             }
+
+            return Ok(Id32(format!("STEAM_0:1:{}", (account - 1) / 2)));
         }
         Err("The steam id provided is not in the SteamID3 format.".into())
     }
 }
 
-impl TryFrom<SteamId64> for SteamId32 {
+impl TryFrom<Id64> for Id32 {
     type Error = crate::error::Error;
 
-    fn try_from(id: SteamId64) -> crate::error::Result<SteamId32> {
+    fn try_from(id: Id64) -> crate::error::Result<Id32> {
         // Here we go off-spec as it seems they have implemented it wrong.
         // The first digit after the `"STEAM_"` should be the universe number, but it
         // is just either always zero or is not a universe number.
         // Hence it is hardcoded to be 0 when we convert the `SteamId64` to `SteamId32`.
         // It works, but off-spec.
         let info = id.info()?;
-        Ok(SteamId32(format!(
+        Ok(Id32(format!(
             "STEAM_0:{}:{}",
             info.authentication_server, info.account
         )))
     }
 }
 
-impl TryFrom<SteamId32> for SteamId64 {
+impl TryFrom<Id32> for Id64 {
     type Error = crate::error::Error;
 
-    fn try_from(id: SteamId32) -> crate::error::Result<SteamId64> {
-        let re = Regex::new(r"^STEAM_(\d):(\d):(\d+)$").unwrap();
-        if let Some(captures) = re.captures(&id.0) {
+    fn try_from(id: Id32) -> crate::error::Result<Id64> {
+        if let Some(captures) = ID32_REGEXP.captures(&id.0) {
             if captures.len() < 4 {
                 return Err("The steam id provided is not in the SteamID32 format.".into());
             }
-            let mut universe: u64 = captures.get(1).unwrap().as_str().parse()?;
-            let authentication_server: u64 = captures.get(2).unwrap().as_str().parse()?;
+            let mut universe: u8 = captures.get(1).unwrap().as_str().parse()?;
+            let authentication_server: u8 = captures.get(2).unwrap().as_str().parse()?;
             let account: u32 = captures.get(3).unwrap().as_str().parse()?;
             if universe == 0 {
                 universe = 1;
             }
-            let num = u64::from_str_radix(
-                &format!(
-                    "{:08b}{:04b}{:020b}{:031b}{:b}",
-                    universe,
-                    DEFAULT_STEAM_ACCOUNT_TYPE,
-                    DEFAULT_STEAM_ACCOUNT_INSTANCE,
-                    account,
-                    authentication_server
-                ),
-                2,
-            )?;
-            return Ok(SteamId64(num));
+            return Id64::new_simple(Universe::try_from(universe)?, authentication_server, account);
         }
         Err("The steam id provided is not in the SteamID32 format.".into())
     }
 }
 
-impl TryFrom<SteamId3> for SteamId64 {
+impl TryFrom<Id3> for Id64 {
     type Error = crate::error::Error;
 
-    fn try_from(id: SteamId3) -> crate::error::Result<SteamId64> {
-        SteamId64::try_from(SteamId32::try_from(id)?)
+    fn try_from(id: Id3) -> crate::error::Result<Id64> {
+        Id64::try_from(Id32::try_from(id)?)
     }
 }
 
-impl SteamId {
+impl Id {
     /// Converts (if needed) the current id format into id64.
-    pub fn id64(&self) -> crate::error::Result<SteamId64> {
+    ///
+    /// # Errors
+    /// Throws `crate::error::Error` if it was impossible to extract the steam id 64.
+    pub fn id64(&self) -> crate::error::Result<Id64> {
         match self {
-            SteamId::Id64(num) => Ok(*num),
-            SteamId::Id32(id) => SteamId64::try_from(id.clone()),
-            SteamId::Id3(id) => SteamId64::try_from(id.clone()),
+            Id::Id64(num) => Ok(*num),
+            Id::Id32(id) => Id64::try_from(id.clone()),
+            Id::Id3(id) => Id64::try_from(id.clone()),
         }
     }
 
     /// Converts (if needed) the current id format into id32.
-    pub fn id32(&self) -> crate::error::Result<SteamId32> {
+    ///
+    /// # Errors
+    /// Throws `crate::error::Error` if it was impossible to extract the steam id 32.
+    pub fn id32(&self) -> crate::error::Result<Id32> {
         match self {
-            SteamId::Id64(num) => SteamId32::try_from(*num),
-            SteamId::Id32(id) => Ok(id.clone()),
-            SteamId::Id3(id) => SteamId32::try_from(id.clone()),
+            Id::Id64(num) => Id32::try_from(*num),
+            Id::Id32(id) => Ok(id.clone()),
+            Id::Id3(id) => Id32::try_from(id.clone()),
         }
     }
 
     /// Consumes the object and converts it into a steam id in the id64 format.
-    pub fn into_id64(self) -> crate::error::Result<SteamId> {
-        Ok(SteamId::Id64(self.id64()?))
+    ///
+    /// # Errors
+    /// Throws `crate::error::Error` if it was impossible to extract the steam id 64.
+    pub fn into_id64(self) -> crate::error::Result<Id> {
+        Ok(Id::Id64(self.id64()?))
     }
 
     /// Consumes the object and converts it into a steam id in the id32 format.
-    pub fn into_id32(self) -> crate::error::Result<SteamId> {
-        Ok(SteamId::Id32(self.id32()?))
+    ///
+    /// # Errors
+    /// Throws `crate::error::Error` if it was impossible to extract the steam id 32.
+    pub fn into_id32(self) -> crate::error::Result<Id> {
+        Ok(Id::Id32(self.id32()?))
     }
 }
 
-impl std::str::FromStr for SteamId {
+impl std::str::FromStr for Id {
     type Err = String;
 
     fn from_str(value: &str) -> std::result::Result<Self, Self::Err> {
         if let Ok(id64) = value.parse::<u64>() {
-            return Ok(SteamId::Id64(SteamId64(id64)));
+            return Ok(Id::Id64(Id64(id64)));
         }
 
         let re = Regex::new(r"^STEAM_\d:\d:\d+$").unwrap();
         if re.is_match(value) {
-            return Ok(SteamId::Id32(SteamId32(value.to_owned())));
+            return Ok(Id::Id32(Id32(value.to_owned())));
         }
 
         let re = Regex::new(r"^\w:\d:\d+$").unwrap();
         if re.is_match(value) {
-            return Ok(SteamId::Id3(SteamId3(value.to_owned())));
+            return Ok(Id::Id3(Id3(value.to_owned())));
         }
 
         Err(format!("Not a valid steam id value: {}", value))
     }
 }
 
-impl std::fmt::Display for SteamId {
+impl std::fmt::Display for Id {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            SteamId::Id64(num) => fmt.write_str(&num.0.to_string()),
-            SteamId::Id32(s) => fmt.write_str(&s.0),
-            SteamId::Id3(s) => fmt.write_str(&s.0),
+            Id::Id64(num) => fmt.write_str(&num.0.to_string()),
+            Id::Id32(s) => fmt.write_str(&s.0),
+            Id::Id3(s) => fmt.write_str(&s.0),
         }
     }
 }
@@ -501,7 +610,7 @@ impl std::fmt::Display for SteamId {
 // can use the best. Here the integer kind of the id is simply the best: less memory usage compared to strings,
 // provides more information, easier to work with.
 #[cfg(feature = "serialization")]
-impl serde::Serialize for SteamId {
+impl serde::Serialize for Id {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
@@ -515,37 +624,37 @@ impl serde::Serialize for SteamId {
 }
 
 #[cfg(feature = "serialization")]
-struct SteamIdVisitor;
+struct IdVisitor;
 
 #[cfg(feature = "serialization")]
-impl<'de> Visitor<'de> for SteamIdVisitor {
-    type Value = SteamId;
+impl<'de> Visitor<'de> for IdVisitor {
+    type Value = Id;
 
     fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-        formatter.write_str("a steam id in the format of Steam ID64, Steam ID, or Steam ID 3.")
+        formatter.write_str("a steam id in the format of  ID64,  ID, or  ID 3.")
     }
 
     fn visit_u64<E>(self, value: u64) -> std::result::Result<Self::Value, E>
     where
         E: de::Error,
     {
-        Ok(SteamId::Id64(SteamId64(value)))
+        Ok(Id::Id64(Id64(value)))
     }
 
     fn visit_str<E>(self, value: &str) -> std::result::Result<Self::Value, E>
     where
         E: de::Error,
     {
-        SteamId::from_str(value).map_err(E::custom)
+        Id::from_str(value).map_err(E::custom)
     }
 }
 #[cfg(feature = "serialization")]
-impl<'de> serde::Deserialize<'de> for SteamId {
-    fn deserialize<D>(deserializer: D) -> std::result::Result<SteamId, D::Error>
+impl<'de> serde::Deserialize<'de> for Id {
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Id, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
-        deserializer.deserialize_any(SteamIdVisitor)
+        deserializer.deserialize_any(IdVisitor)
     }
 }
 
@@ -553,38 +662,19 @@ impl<'de> serde::Deserialize<'de> for SteamId {
 mod tests {
     use super::*;
 
-    #[test]
-    fn steam_id_conversions() {
-        let steam_id_64 = SteamId64(76561197983318796);
-        let steam_id_3 = SteamId3("U:1:23053068".to_owned());
-        assert_eq!(
-            SteamId32::try_from(steam_id_3.clone()).unwrap(),
-            SteamId32("STEAM_0:0:11526534".to_owned())
-        );
-        assert_eq!(
-            SteamId64::try_from(steam_id_3).unwrap(),
-            SteamId64(76561197983318796)
-        );
-        assert_eq!(
-            SteamId32::try_from(steam_id_64).unwrap(),
-            SteamId32("STEAM_0:0:11526534".to_owned())
-        );
-    }
-
     #[cfg(feature = "serialization")]
     #[test]
     fn steam_id_enum_serialize() {
         assert_eq!(
-            serde_json::to_string(&SteamId::Id64(SteamId64(76561197983318796))).unwrap(),
+            serde_json::to_string(&Id::Id64(Id64(76561197983318796))).unwrap(),
             "76561197983318796"
         );
         assert_eq!(
-            serde_json::to_string(&SteamId::Id32(SteamId32("STEAM_0:0:11526534".to_owned())))
-                .unwrap(),
+            serde_json::to_string(&Id::Id32(Id32("STEAM_0:0:11526534".to_owned()))).unwrap(),
             "76561197983318796"
         );
         assert_eq!(
-            serde_json::to_string(&SteamId::Id3(SteamId3("U:1:23053068".to_owned()))).unwrap(),
+            serde_json::to_string(&Id::Id3(Id3("U:1:23053068".to_owned()))).unwrap(),
             "76561197983318796"
         );
     }
@@ -593,19 +683,16 @@ mod tests {
     #[test]
     fn steam_id_enum_deserialize() {
         let s = "\"STEAM_0:0:11526534\"";
-        let id = serde_json::from_str::<SteamId>(s).unwrap();
-        assert_eq!(
-            id,
-            SteamId::Id32(SteamId32("STEAM_0:0:11526534".to_owned()))
-        );
+        let id = serde_json::from_str::<Id>(s).unwrap();
+        assert_eq!(id, Id::Id32(Id32("STEAM_0:0:11526534".to_owned())));
         let s = "76561197983318796";
-        let id = serde_json::from_str::<SteamId>(s).unwrap();
-        assert_eq!(id, SteamId::Id64(SteamId64(76561197983318796)));
+        let id = serde_json::from_str::<Id>(s).unwrap();
+        assert_eq!(id, Id::Id64(Id64(76561197983318796)));
         let s = "\"76561197983318796\"";
-        let id = serde_json::from_str::<SteamId>(s).unwrap();
-        assert_eq!(id, SteamId::Id64(SteamId64(76561197983318796)));
+        let id = serde_json::from_str::<Id>(s).unwrap();
+        assert_eq!(id, Id::Id64(Id64(76561197983318796)));
         let s = "\"U:1:23053068\"";
-        let id = serde_json::from_str::<SteamId>(s).unwrap();
-        assert_eq!(id, SteamId::Id3(SteamId3("U:1:23053068".to_owned())));
+        let id = serde_json::from_str::<Id>(s).unwrap();
+        assert_eq!(id, Id::Id3(Id3("U:1:23053068".to_owned())));
     }
 }

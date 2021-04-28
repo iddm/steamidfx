@@ -7,7 +7,7 @@
 pub struct SteamCoProfile {
     /// The steam id of this profile.
     #[cfg_attr(feature = "serialization", serde(rename = "steamID64"))]
-    pub steam_id: crate::id::SteamId,
+    pub steam_id: crate::id::Id,
     /// The name of the profile in steam.
     #[cfg_attr(feature = "serialization", serde(rename = "steamID"))]
     pub name: String,
@@ -32,7 +32,10 @@ pub struct SteamCoProfile {
 
 /// Creates a URL which can be used to perform an http request for getting steam account information
 /// by steam id.
-pub fn get_steamco_profile_url(id: &crate::id::SteamId) -> crate::error::Result<String> {
+///
+/// # Errors
+/// Throws `crate::error::Error` if it was impossible to extract the steam id 64 from the passed steam id object.
+pub fn get_steamco_profile_url(id: &crate::id::Id) -> crate::error::Result<String> {
     Ok(format!(
         "http://steamid.co/php/api.php?action=steamID64&id={}",
         id.id64()?.0
@@ -251,7 +254,7 @@ mod tests {
         let profile = serde_json::from_str::<super::SteamCoProfile>(string).unwrap();
         assert_eq!(
             profile.steam_id,
-            crate::id::SteamId::Id64(crate::id::SteamId64(76561197992396121))
+            crate::id::Id::Id64(crate::id::Id64(76561197992396121))
         );
     }
 }
