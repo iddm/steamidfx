@@ -434,6 +434,18 @@ impl Id3 {
 ///     steamidfx::id::Id32::try_from(steam_id_64).unwrap(),
 ///     steamidfx::id::Id32("STEAM_0:0:11526534".to_owned())
 /// );
+///
+/// // The most preferred way to construct Ids is using the fallible `TryFrom`.
+/// // This will make sure that the constructed `ID`s are correct as some of
+/// // the fields of it are required to be of some certain ranges of values.
+/// use std::str::FromStr;
+///
+/// let id_64 = steamidfx::id::Id::from_str("76561197983318796").unwrap();
+/// let id_64_2 = steamidfx::id::Id::try_from(76561197983318796).unwrap();
+/// let id_32 = steamidfx::id::Id::from_str("76561197983318796").unwrap();
+/// let id_3 = steamidfx::id::Id::from_str("76561197983318796").unwrap();
+/// // This way you'll make sure after unpacking the `Result` that the value is correct
+/// // at least, according to the specification.
 /// ```
 
 #[allow(clippy::clippy::module_name_repetitions)]
@@ -448,6 +460,18 @@ pub enum Id {
     /// Steam ID in the format called "Steam ID 3".
     /// Example: `U:1:xxxxxxxx`.
     Id3(Id3),
+}
+
+impl std::convert::TryFrom<u64> for Id {
+    type Error = crate::error::Error;
+
+    fn try_from(id: u64) -> crate::error::Result<Id> {
+        let id = Id64(id);
+        if let Err(e) = id.info() {
+            return Err(e);
+        }
+        Ok(Id::Id64(id))
+    }
 }
 
 impl std::convert::TryFrom<Id32> for Id3 {
@@ -575,24 +599,22 @@ impl Id {
 }
 
 impl std::str::FromStr for Id {
-    type Err = String;
+    type Err = crate::error::Error;
 
     fn from_str(value: &str) -> std::result::Result<Self, Self::Err> {
         if let Ok(id64) = value.parse::<u64>() {
             return Ok(Id::Id64(Id64(id64)));
         }
 
-        let re = Regex::new(r"^STEAM_\d:\d:\d+$").unwrap();
-        if re.is_match(value) {
+        if ID32_REGEXP.is_match(value) {
             return Ok(Id::Id32(Id32(value.to_owned())));
         }
 
-        let re = Regex::new(r"^\w:\d:\d+$").unwrap();
-        if re.is_match(value) {
+        if ID3_REGEXP.is_match(value) {
             return Ok(Id::Id3(Id3(value.to_owned())));
         }
 
-        Err(format!("Not a valid steam id value: {}", value))
+        Err(crate::error::ErrorKind::InvalidSteamId(format!("Not a valid steam id value: {}", value)).into())
     }
 }
 
