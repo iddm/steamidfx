@@ -446,8 +446,8 @@ impl Id3 {
 ///
 /// let id_64 = steamidfx::id::Id::from_str("76561197983318796").unwrap();
 /// let id_64_2 = steamidfx::id::Id::try_from(76561197983318796).unwrap();
-/// let id_32 = steamidfx::id::Id::from_str("76561197983318796").unwrap();
-/// let id_3 = steamidfx::id::Id::from_str("76561197983318796").unwrap();
+/// let id_32 = steamidfx::id::Id::from_str("STEAM_0:0:11526534").unwrap();
+/// let id_3 = steamidfx::id::Id::from_str("U:1:23053068").unwrap();
 /// // This way you'll make sure after unpacking the `Result` that the value is correct
 /// // at least, according to the specification.
 /// ```
@@ -603,6 +603,36 @@ impl Id {
     /// Throws `crate::error::Error` if it was impossible to extract the steam id 32.
     pub fn into_id32(self) -> crate::error::Result<Id> {
         Ok(Id::Id32(self.id32()?))
+    }
+
+    /// Attempts to compare two ids. Returns `true` when they are representing
+    /// the same values, even using different formats.
+    /// The conventional `Eq` and `PartialEq` traits derived will be checking
+    /// the enum variants and strings inside, which is sometimes not what we want.
+    /// Sometimes we just want to say that these two `Id` objects represent the
+    /// same person, or an entity of valve. For that, we aren't interested in the
+    /// format of the ID, but rather in the data it provides.
+    ///
+    /// # Errors
+    /// Returns an error when it is impossible to convert both ids to a single
+    /// format: `id64`. This format is used as it is the most commonly used one,
+    /// and provides the most information possible. Hence, all the ID formats
+    /// should ideally be convertible to it just fine, but we are still performing
+    /// all the checks to be a bit more cautious about it.
+    ///
+    /// # Examples
+    /// ```rust
+    /// use std::str::FromStr;
+    /// use std::convert::TryFrom;
+    ///
+    /// let id_64 = steamidfx::id::Id::try_from(76561197983318796).unwrap();
+    /// let id_32 = steamidfx::id::Id::from_str("STEAM_0:0:11526534").unwrap();
+    /// let id_3 = steamidfx::id::Id::from_str("U:1:23053068").unwrap();
+    /// assert!(id_3.is_same(&id_32).unwrap());
+    /// assert!(id_32.is_same(&id_64).unwrap());
+    /// ```
+    pub fn is_same(&self, other: &Id) -> crate::error::Result<bool> {
+        Ok(self.id64()? == other.id64()?)
     }
 }
 
