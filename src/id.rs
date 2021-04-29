@@ -278,7 +278,7 @@ pub struct Info {
 
 /// Steam Id 64.
 /// Example: `7656119xxxxxxxxxx`.
-#[allow(clippy::clippy::module_name_repetitions)]
+#[allow(clippy::module_name_repetitions)]
 #[derive(Debug, Copy, Clone, Ord, PartialOrd, Hash, PartialEq, Eq)]
 #[cfg_attr(
     feature = "serialization",
@@ -373,7 +373,7 @@ impl Id64 {
 
 /// Steam Id 32.
 /// Example: `STEAM_0:X:XXXXXXXX`.
-#[allow(clippy::clippy::module_name_repetitions)]
+#[allow(clippy::module_name_repetitions)]
 #[derive(Debug, Clone, Ord, PartialOrd, Hash, PartialEq, Eq)]
 #[cfg_attr(
     feature = "serialization",
@@ -383,7 +383,7 @@ pub struct Id32(pub String);
 
 /// Steam Id 3.
 /// Example: `U:1:xxxxxxxx`.
-#[allow(clippy::clippy::module_name_repetitions)]
+#[allow(clippy::module_name_repetitions)]
 #[derive(Debug, Clone, Ord, PartialOrd, Hash, PartialEq, Eq)]
 #[cfg_attr(
     feature = "serialization",
@@ -452,7 +452,7 @@ impl Id3 {
 /// // at least, according to the specification.
 /// ```
 
-#[allow(clippy::clippy::module_name_repetitions)]
+#[allow(clippy::module_name_repetitions)]
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum Id {
     /// Steam ID in a single integer format (SteamID64).
