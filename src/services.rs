@@ -45,6 +45,8 @@ pub fn get_steamco_profile_url(id: &crate::id::Id) -> crate::error::Result<Strin
 #[cfg(test)]
 mod tests {
     #[cfg(feature = "serialization")]
+    #[allow(clippy::unreadable_literal)]
+    #[allow(clippy::too_many_lines)]
     #[test]
     fn steamidco_profile_parse_ok() {
         let string = r#"

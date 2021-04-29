@@ -359,7 +359,11 @@ impl Id64 {
         let num = u64::from_str_radix(
             &format!(
                 "{:08b}{:04b}{:020b}{:031b}{:b}",
-                universe as u8, account_type as u8, account_instance, account, authentication_server
+                universe as u8,
+                account_type as u8,
+                account_instance,
+                account,
+                authentication_server
             ),
             2,
         )?;
@@ -542,7 +546,11 @@ impl TryFrom<Id32> for Id64 {
             if universe == 0 {
                 universe = 1;
             }
-            return Id64::new_simple(Universe::try_from(universe)?, authentication_server, account);
+            return Id64::new_simple(
+                Universe::try_from(universe)?,
+                authentication_server,
+                account,
+            );
         }
         Err("The steam id provided is not in the SteamID32 format.".into())
     }
@@ -614,7 +622,11 @@ impl std::str::FromStr for Id {
             return Ok(Id::Id3(Id3(value.to_owned())));
         }
 
-        Err(crate::error::ErrorKind::InvalidSteamId(format!("Not a valid steam id value: {}", value)).into())
+        Err(crate::error::ErrorKind::InvalidSteamId(format!(
+            "Not a valid steam id value: {}",
+            value
+        ))
+        .into())
     }
 }
 
@@ -685,6 +697,7 @@ mod tests {
     use super::*;
 
     #[cfg(feature = "serialization")]
+    #[allow(clippy::unreadable_literal)]
     #[test]
     fn steam_id_enum_serialize() {
         assert_eq!(
@@ -702,19 +715,20 @@ mod tests {
     }
 
     #[cfg(feature = "serialization")]
+    #[allow(clippy::unreadable_literal)]
     #[test]
     fn steam_id_enum_deserialize() {
-        let s = "\"STEAM_0:0:11526534\"";
-        let id = serde_json::from_str::<Id>(s).unwrap();
-        assert_eq!(id, Id::Id32(Id32("STEAM_0:0:11526534".to_owned())));
-        let s = "76561197983318796";
-        let id = serde_json::from_str::<Id>(s).unwrap();
-        assert_eq!(id, Id::Id64(Id64(76561197983318796)));
-        let s = "\"76561197983318796\"";
-        let id = serde_json::from_str::<Id>(s).unwrap();
-        assert_eq!(id, Id::Id64(Id64(76561197983318796)));
-        let s = "\"U:1:23053068\"";
-        let id = serde_json::from_str::<Id>(s).unwrap();
-        assert_eq!(id, Id::Id3(Id3("U:1:23053068".to_owned())));
+        let strid32 = "\"STEAM_0:0:11526534\"";
+        let id32 = serde_json::from_str::<Id>(strid32).unwrap();
+        assert_eq!(id32, Id::Id32(Id32("STEAM_0:0:11526534".to_owned())));
+        let strid64 = "76561197983318796";
+        let id64 = serde_json::from_str::<Id>(strid64).unwrap();
+        assert_eq!(id64, Id::Id64(Id64(76561197983318796)));
+        let strid64s = "\"76561197983318796\"";
+        let id64s = serde_json::from_str::<Id>(strid64s).unwrap();
+        assert_eq!(id64s, Id::Id64(Id64(76561197983318796)));
+        let strid3 = "\"U:1:23053068\"";
+        let id3 = serde_json::from_str::<Id>(strid3).unwrap();
+        assert_eq!(id3, Id::Id3(Id3("U:1:23053068".to_owned())));
     }
 }
