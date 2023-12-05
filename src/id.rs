@@ -405,8 +405,8 @@ impl Id3 {
         let authentication_server: u8 = split[1].parse()?;
         let account: u32 = split[2].parse()?;
         Ok(Info {
-            /// The universe is hard to know for sure, as from `SteamId3` format it is unknown how to
-            /// parse it.
+            // The universe is hard to know for sure, as from `SteamId3` format it is unknown how to
+            // parse it.
             universe: Universe::IndividualOrUnspecified,
             account_type: AccountType::from_str(split[0])?,
             instance: u32::from(DEFAULT_STEAM_ACCOUNT_INSTANCE),

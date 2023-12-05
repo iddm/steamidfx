@@ -7,7 +7,7 @@ description = "Work with steam id easily"
 readme = "README.md"
 license = "MIT"
 keywords = ["steam", "steamid", "id"]
-repository = "https://github.com/vityafx/steamidfx"
+repository = "https://github.com/iddm/steamidfx"
 documentation = "https://docs.rs/steamidfx"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -22,7 +22,7 @@ version = "1"
 optional = true
 
 [dependencies.serde-aux]
-version = "2"
+version = "4"
 optional = true
 
 [dev-dependencies.serde_json]
